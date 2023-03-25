@@ -4,7 +4,7 @@ import { reactive, toRefs } from 'vue'
 interface iItem {
   id: String,
   value: String,
-  checked: Boolean
+  checked: boolean
 }
 
 interface iTodo {
@@ -18,9 +18,13 @@ const todoData:iTodo = reactive({
 })
 const { value, list } = toRefs(todoData)
 
-function addItem(ev: MouseEvent) {
-  // console.log(ev.target.value);
-  console.log(ev);
+function addItem() {
+  todoData.list.push({
+    value: value.value,
+    id: String(Math.floor(Math.random() * 1000000)),
+    checked: false
+  })
+  value.value = ""
 }
 </script>
 
