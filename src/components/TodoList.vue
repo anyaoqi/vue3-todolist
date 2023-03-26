@@ -1,31 +1,72 @@
 <script setup lang='ts'>
-import { reactive, toRefs } from 'vue'
+import { reactive, toRefs, onMounted, onBeforeUnmount } from 'vue'
 
+// item类型
 interface iItem {
-  id: String,
-  value: String,
+  id: string,
+  value: string,
   checked: boolean
 }
-
+// todo数据类型
 interface iTodo {
-  value: String,
-  list: Array<iItem>
+  value: string,
+  list: Array<iItem>  // 泛型数组写法
 }
 
+// 数据
 const todoData:iTodo = reactive({
-  value: '',
-  list: []
+  value: '',  // 要添加的值
+  list: [],   // 已添加的列表
 })
+
+// 将数据通过toRefs转为ref对象（方便在template模板中使用）
 const { value, list } = toRefs(todoData)
 
-function addItem() {
+// 添加待办事项
+function addTodoItem() {
+  if(!todoData.value) {
+    alert('请输入待办事项')
+    return
+  }
   todoData.list.push({
-    value: value.value,
+    value: todoData.value,
     id: String(Math.floor(Math.random() * 1000000)),
     checked: false
   })
-  value.value = ""
+  todoData.value = ""
 }
+
+// 删除待办事项
+function delTodoItem(index: number):void {
+  todoData.list.splice(index, 1)
+}
+
+// 监听键盘回车事件
+function keyboardListener(ev: KeyboardEvent):void {
+  ev.key === 'Enter' && addTodoItem()
+}
+
+// 选择事件
+function checkChange(ev: Event, item:iItem):void {
+  let target = ev.target as HTMLInputElement
+  let index = todoData.list.findIndex(todoItem => todoItem.id === item.id)
+  if(index !==-1 ) {
+    todoData.list[index].checked = target.checked
+  }
+}
+
+// 组件加载完后触发 mounted生命周期
+onMounted(() => {
+  // 添加键盘事件监听
+  window.addEventListener('keydown', keyboardListener)
+})
+
+// 离开之前触发 beforeUnmount生命周期
+onBeforeUnmount(() => {
+  // 移除键盘事件监听
+  window.removeEventListener('keydown', keyboardListener)
+})
+
 </script>
 
 <template>
@@ -36,11 +77,19 @@ function addItem() {
       </h2>
       <div class='todoWrapper'>
         <input class='todoInput' v-model='value' type="text" placeholder='请输入待办事项'>
-        <button class='todoAddButton' type='button' @click='addItem'>添加</button>
+        <button class='todoAddButton' type='button' @click='addTodoItem'>添加</button>
       </div>
     </header>
     <ul class='todoList' v-if='list.length'>
-      <li class='todoItem' v-for='(item,index) in list' :key='index'>{{ item.value }}</li>
+      <li class='todoItem' v-for='(item,index) in list' :key='index'>
+        <div>
+          <label class='todoCheckLabel'>
+            <input type="checkbox" class='todoCheckbox'  @change='checkChange($event, item)'/>
+          </label>
+          <span :class='{ "contentChecked": item.checked }'>{{ item.value }}</span>
+        </div>
+        <span class='itemDelete' @click='delTodoItem(index)'> [删除]</span>
+      </li>
     </ul>
   </div>
 </template>
