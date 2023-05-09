@@ -12,6 +12,10 @@ export const useTodoStore = defineStore('todoStore', {
   actions: {
     // 添加待办项
     addTodoItem() {
+      if(!this.value) {
+        alert('请输入待办事项')
+        return
+      }
       this.list.push({
         id: Math.floor(Math.random() * 100000000).toString(),
         value: this.value,
