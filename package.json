@@ -2,6 +2,7 @@
   "name": "vue-todolist",
   "version": "0.0.0",
   "private": true,
+  "homepage": "https://anyaoqi.github.io/vue3-todolist",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check build-only",
