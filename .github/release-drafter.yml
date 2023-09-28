@@ -1,43 +1,13 @@
-# Configuration for Release Drafter: https://github.com/toolmantim/release-drafter
-name-template: 'v$RESOLVED_VERSION 🌈'
-tag-template: 'v$RESOLVED_VERSION'
-# Emoji reference: https://gitmoji.carloscuesta.me/
+name-template: 'v{{ version }}'
+tag-template: 'v{{ version }}'
 categories:
   - title: '🚀 Features'
     labels:
       - 'feature'
-      - 'enhancement'
-      - 'kind/feature'
   - title: '🐛 Bug Fixes'
     labels:
       - 'fix'
-      - 'bugfix'
-      - 'bug'
-      - 'regression'
-      - 'kind/bug'
-  - title: 📝 Documentation updates
+  - title: '📝 Documentation updates'
     labels:
-      - documentation
-      - 'kind/doc'
-  - title: 👻 Maintenance
-    labels:
-      - chore
-      - dependencies
-      - 'kind/chore'
-      - 'kind/dep'
-  - title: 🚦 Tests
-    labels:
-      - test
-      - tests
-exclude-labels:
-  - reverted
-  - no-changelog
-  - skip-changelog
-  - invalid
+      - 'documentation'
 change-template: '* $TITLE (#$NUMBER) @$AUTHOR'
-template: |
-  ## What’s Changed
-  $CHANGES
-Terms
-Privacy
-Security
