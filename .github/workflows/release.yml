@@ -1,46 +1,22 @@
-name: Build and Release
+name: Release Drafter
 
 on:
   push:
     branches:
-      - main # 设置你的主分支
+      - main
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  update_release_draft:
+    permissions:
+      contents: write  # for release-drafter/release-drafter to create a github release
+      pull-requests: write  # for release-drafter/release-drafter to add label to PR
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        with:
-          files: |
-            dist/*
-        if: success()
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/*
-          asset_name: vue-app-${{ github.run_number }}.zip
-          asset_content_type: application/zip
